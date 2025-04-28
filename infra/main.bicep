@@ -1,6 +1,7 @@
 targetScope = 'subscription'
 
-
+@description('Enable public IP address for the virtual machine')
+param enablePublicIp bool = true
 
 @minLength(1)
 @description('Username for the environment')
@@ -71,12 +72,12 @@ module vnet 'modules/vnet.bicep' = {
   }
 }
 
-module sshKey 'br/public:avm/res/compute/ssh-public-key:0.4.3' = {
-  name: 'sshKey'
+module publicKey 'modules/public-key.bicep' = {
+  name: 'CreatePublicKey'
   scope: rg
   params: {
     location: location
-    name: sshKeyName
+    sshKeyName: sshKeyName
     tags: tags
   }
 }
@@ -92,5 +93,6 @@ module vm 'modules/vm.bicep' = {
     adminPassword: guid(resourceGroupName)
     disablePasswordAuthentication: false
     pipName: pipName
+    enablePublicIp: enablePublicIp
   }
 }

@@ -12,7 +12,7 @@ az login
 Then run the script:
 
 ```shell
-az deployment sub create --name IaC-Demo --location eastus --template-file ./infra/main.bicep
+az deployment sub create --name IaC-Demo --location eastus --template-file ./infra/main.bicep --parameters enablePublicIp=false --parameters username='azureuser'
 ```
 
 ## Via Automation

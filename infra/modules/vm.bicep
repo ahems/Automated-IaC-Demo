@@ -58,6 +58,9 @@ param zone int = 0
 @description('Disable password authentication (set to true for SSH key authentication)')
 param disablePasswordAuthentication bool = true
 
+@description('Enable public IP address for the virtual machine')
+param enablePublicIp bool = true
+
 module vm 'br/public:avm/res/compute/virtual-machine:0.14.0' = {
   name: 'virtualMachineDeployment'
   params: {
@@ -73,9 +76,9 @@ module vm 'br/public:avm/res/compute/virtual-machine:0.14.0' = {
         ipConfigurations: [
           {
             name: pipName
-            pipConfiguration: {
+            pipConfiguration: enablePublicIp ? {
               name: pipName
-            }
+            } : null
             subnetResourceId: subnetResourceId
           }
         ]
