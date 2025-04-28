@@ -1,6 +1,6 @@
 {
     "name": "Automated IaC Demo",
-    "image": "mcr.microsoft.com/devcontainers/typescript-node:0-18",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
     "features": {
         "ghcr.io/devcontainers/features/azure-cli:1": {
             "version": "latest"
@@ -17,7 +17,7 @@
     "forwardPorts": [
         50505
     ],
-    "postCreateCommand": "",
+    "postCreateCommand": "az bicep install",
     "hostRequirements": {
         "memory": "8gb"
     }
