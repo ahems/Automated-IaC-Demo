@@ -17,46 +17,43 @@ az deployment sub create --name IaC-Demo --location eastus --template-file ./inf
 
 ## Via Automation
 
-You need to create a Service Principal with the right permissions to run the script:
+1. **Fork The Repo**
 
-```shell
-az ad sp create-for-rbac --name "github-action-sp" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>
-```
+   First, you will need to **fork this repo** to your own GitHub account.
 
-This command will output the following values:
+2. **Create a Service Principal**
 
-appId: This is your AZURE_CLIENT_ID.
-tenant: This is your AZURE_TENANT_ID.
-password: This is the client secret (not needed for federated credentials).
-subscriptionId: This is your AZURE_SUBSCRIPTION_ID.
+   Then, you need to create a Service Principal with the right permissions to run the script:
 
-Next, enable Federated Credentials:
+   ```shell
+   az ad sp create-for-rbac --name "github-action-sp" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>
+   ```
 
-```shell
-az identity federated-credential create \
-  --name "github-actions-federated-credential" \
-  --identity-name "github-action-sp" \
-  --resource-group <RESOURCE_GROUP_NAME> \
-  --issuer "https://token.actions.githubusercontent.com" \
-  --subject "repo:<OWNER>/<REPO>:ref:refs/heads/<BRANCH>" \
-  --audiences "api://AzureADTokenExchange"
-```
+   This command will output the following values:
 
-Use the Azure CLI to retrieve the federated token:
+   * appId: This is your AZURE_CLIENT_ID.
+   * tenant: This is your AZURE_TENANT_ID.
+   * password: This is the AZURE_CLIENT_SECRET. 
+   * subscriptionId: This is your AZURE_SUBSCRIPTION_ID.
 
-```shell
-az account get-access-token --resource https://management.azure.com
-```
+3. **Set Secrets in GitHub**
 
-The output will include an accessToken, which you can use as the AZURE_FEDERATED_TOKEN.
+   Add the retrieved values as secrets in your GitHub repository. Follow these steps:
 
-Set Secrets in GitHub
-Add the retrieved values as secrets in your GitHub repository:
+   * Go to your repository on GitHub.
+   * Navigate to Settings > Secrets and variables > Actions.
+   * Add the following secrets:
+     
+     * AZURE_CLIENT_ID: Use the appId from Step 2.
+     * AZURE_TENANT_ID: Use the tenant from Step 2.
+     * AZURE_SUBSCRIPTION_ID: Use the subscriptionId from Step 2.
+     * AZURE_CLIENT_SECRET: Use the password from Step 2.
 
-Go to your repository on GitHub.
-Navigate to Settings > Secrets and variables > Actions.
-Add the following secrets:
-AZURE_CLIENT_ID: Use the appId from Step 2.
-AZURE_TENANT_ID: Use the tenant from Step 2.
-AZURE_SUBSCRIPTION_ID: Use the subscriptionId from Step 2.
-AZURE_FEDERATED_TOKEN: Use the accessToken from Step 4.
+4. ** Run the Action
+
+   Finally, you can run this action to have it deploy the IaC. This step itself could be automated too but to run it manually:
+
+   * Go to your repository on GitHub.
+   * Navigate to the Actions tab.
+   * You should see the workflow named "Deploy To Azure from IaC" listed under "All workflows".
+   * Initiate a new run, entering a value for username.
