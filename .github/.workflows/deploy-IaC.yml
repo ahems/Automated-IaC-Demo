@@ -1,0 +1,41 @@
+name: Deploy To Azure from IaC
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Username for the Deployment'
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy Bicep Template
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to Azure using managed identity
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      - name: Deploy Bicep template
+        run: |
+          # Install Azure CLI if not already installed
+          if ! command -v az &> /dev/null
+          then
+              echo "Azure CLI not found, installing..."
+              curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          fi
+
+          # Deploy the Bicep template
+          az deployment sub create --name IaC-Demo --location eastus --template-file ./infra/main.bicep --parameters enablePublicIp=false --parameters username='${{ inputs.username }}'
