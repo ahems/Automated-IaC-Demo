@@ -49,7 +49,7 @@ az deployment sub create --name IaC-Demo --location eastus --template-file ./inf
      * AZURE_SUBSCRIPTION_ID: Use the subscriptionId from Step 2.
      * AZURE_CLIENT_SECRET: Use the password from Step 2.
 
-4. ** Run the Action
+4. **Run the Action**
 
    Finally, you can run this action to have it deploy the IaC. To run this step manually:
 
