@@ -51,9 +51,15 @@ az deployment sub create --name IaC-Demo --location eastus --template-file ./inf
 
 4. ** Run the Action
 
-   Finally, you can run this action to have it deploy the IaC. This step itself could be automated too but to run it manually:
+   Finally, you can run this action to have it deploy the IaC. To run this step manually:
 
    * Go to your repository on GitHub.
    * Navigate to the Actions tab.
    * You should see the workflow named "Deploy To Azure from IaC" listed under "All workflows".
    * Initiate a new run, entering a value for username.
+
+   To run this step automatically, get a [PAT] (https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and use it to call the GitHub API via HTTPS. Here is an example of how to do this using curl:
+
+   ```shell
+   curl -X POST "https://api.github.com/repos/ahems/Automated-IaC-Demo/actions/workflows/deploy-IaC.yml/dispatches" -H "Accept: application/vnd.github.v3+json" -H "Authorization: Bearer <Your GitHub PAT>" -H "Content-Type: application/json" -d "{\"ref\": \"main\", \"inputs\": {\"username\": \"adamhems\"}}"
+   ```
